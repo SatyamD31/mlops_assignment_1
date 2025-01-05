@@ -32,7 +32,8 @@ def load_and_preprocess_data(file_path):
 def preprocess_text(text):
     # Remove URLs, mentions, hashtags, and special characters using regular expressions
     text = re.sub(r"http\S+|www\S+|https\S+", '', text, flags=re.MULTILINE)  # Remove URLs
-    text = re.sub(r'@\w+|\#', '', text)  # Remove mentions and hashtags
+    text = re.sub(r'@\w+', '', text)  # Remove mentions
+    text = re.sub(r'#\w+', '', text)  # Remove hashtags
     text = re.sub(r'[^A-Za-z0-9 ]+', '', text)  # Remove special characters
     text = text.lower()  # Convert text to lowercase
     text = word_tokenize(text)  # Tokenize the text
