@@ -6,6 +6,7 @@ from nltk.tokenize import word_tokenize
 # Ensure NLTK resources are downloaded
 import nltk
 nltk.download('punkt')
+nltk.download('punkt_tab')
 nltk.download('stopwords')
 
 # Define the preprocess_text function
