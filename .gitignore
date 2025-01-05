@@ -1,6 +1,5 @@
 .venv/
 data/
 test-nb.ipynb
-models/
 __pycache__/
 .pytest_cache/
