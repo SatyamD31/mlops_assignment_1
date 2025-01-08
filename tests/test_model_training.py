@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import train_test_split
 
+
 # Sample dataset for testing
 @pytest.fixture
 def sample_data():
@@ -19,6 +20,7 @@ def sample_data():
     }
     return pd.DataFrame(data)
 
+
 # Preprocessing and vectorization
 @pytest.fixture
 def preprocessed_data(sample_data):
@@ -26,6 +28,7 @@ def preprocessed_data(sample_data):
     X = vectorizer.fit_transform(sample_data["text"])
     y = sample_data["category"]
     return X, y
+
 
 def test_model_training(preprocessed_data):
     X, y = preprocessed_data

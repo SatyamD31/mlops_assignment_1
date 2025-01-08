@@ -1,4 +1,3 @@
-import pytest
 from src.data_preprocessing import preprocess_text
 
 
