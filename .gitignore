@@ -2,3 +2,4 @@
 test-nb.ipynb
 __pycache__/
 .pytest_cache/
+kubernetes
