@@ -9,7 +9,7 @@ def home():
 
 
 # Load the models
-model = joblib.load('models/model.pkl')
+model = joblib.load('models/best_naive_bayes_model.pkl')
 vectorizer = joblib.load('models/vectorizer.pkl')
 
 @app.route('/predict', methods=['POST'])

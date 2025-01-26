@@ -24,13 +24,18 @@
             color: #333;
         }
         textarea {
+            /* width: calc(100% - 20px); Slightly smaller than the container for padding consistency */
             width: 100%;
-            height: 100px;
+            max-width: 100%; /* Prevents overflow beyond the container */
+            height: 150px; /* Fixed height */
+            max-height: 200px; /* Ensures it doesn't grow too large */
             margin: 10px 0;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 14px;
+            resize: none; /* Prevents manual resizing */
+            box-sizing: border-box; /* Includes padding and border in width/height calculations */
         }
         button {
             display: block;
