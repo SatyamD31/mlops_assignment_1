@@ -24,7 +24,7 @@ def sample_data():
 # Preprocessing and vectorization
 @pytest.fixture
 def preprocessed_data(sample_data):
-    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), stop_words="english")
+    vectorizer = TfidfVectorizer(max_features=11000, ngram_range=(1, 2), stop_words="english")
     X = vectorizer.fit_transform(sample_data["text"])
     y = sample_data["category"]
     return X, y

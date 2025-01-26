@@ -6,18 +6,21 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pandas as pd
-import numpy as np
 import re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import joblib
 
 # Ensure NLTK resources are downloaded
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
 
+
 # Define the preprocess_text function
 stop_words = set(stopwords.words('english'))
+filepath = "data/Twitter_Data.csv"
+
 
 def load_and_preprocess_data(file_path):
     # Load the dataset
@@ -35,6 +38,7 @@ def load_and_preprocess_data(file_path):
 
     return df
 
+
 def preprocess_text(text):
     # Remove URLs, mentions, hashtags, and special characters using regular expressions
     text = re.sub(r"http\S+|www\S+|https\S+", '', text, flags=re.MULTILINE)  # Remove URLs
@@ -46,31 +50,39 @@ def preprocess_text(text):
     text = [word for word in text if word not in stop_words]  # Remove stop words
     return ' '.join(text)
 
+
 def extract_features(df):
-    tfidf_vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), stop_words='english')
+    tfidf_vectorizer = TfidfVectorizer(max_features=11000, ngram_range=(1, 2), stop_words='english')
     X = tfidf_vectorizer.fit_transform(df['cleaned_text'])
     y = df['category']
     return X, y, tfidf_vectorizer
 
+
 def split_data(X, y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     return X_train, X_test, y_train, y_test
+
 
 def train_model(X_train, y_train, alpha=1.0):
     nb_classifier = MultinomialNB(alpha=alpha)
     nb_classifier.fit(X_train, y_train)
     return nb_classifier
 
+
+def save_model(model, model_path):
+    # Save the model using joblib
+    joblib.dump(model, model_path)
+
+
 def objective(trial):
     # Hyperparameter search space
-    alpha = trial.suggest_loguniform('alpha', 1e-5, 1e1)  # log-uniform distribution for alpha
+    alpha = trial.suggest_loguniform('alpha', 1e-7, 1e-3)  # log-uniform distribution for alpha
 
     # Load and preprocess the data
-    filepath = 'C:/Users/vidis/Downloads/mlops_assignment_1-feat-satyam/mlops_assignment_1-feat-satyam/data/Twitter_Data.csv'
     df = load_and_preprocess_data(filepath)
     X, y, tfidf_vectorizer = extract_features(df)
     X_train, X_test, y_train, y_test = split_data(X, y)
-    
+
     # Train model with current alpha
     model = train_model(X_train, y_train, alpha)
 
@@ -94,8 +106,14 @@ def objective(trial):
         # Log model
         mlflow.sklearn.log_model(model, "naive_bayes_model")
         mlflow.log_artifact(filepath, artifact_path="tables")
-    
+
     return accuracy  # Optuna optimizes the objective function (maximize accuracy)
+
+
+def save_best_model(best_model, best_model_path="best_naive_bayes_model.pkl"):
+    # Save the best performing model after Optuna optimization
+    joblib.dump(best_model, best_model_path)
+
 
 if __name__ == "__main__":
     # Create an Optuna study for optimization
@@ -106,3 +124,16 @@ if __name__ == "__main__":
     print(f"BEST HYPERPARAMS: {study.best_params}")
     print(f"BEST ACCURACY: {study.best_value}")
 
+    # Get the best trial's model (highest accuracy)
+    best_trial = study.best_trial
+    best_alpha = best_trial.params['alpha']
+
+    # Reload and train the best model using the best alpha
+    df = load_and_preprocess_data(filepath)
+    X, y, tfidf_vectorizer = extract_features(df)
+    X_train, X_test, y_train, y_test = split_data(X, y)
+
+    best_model = train_model(X_train, y_train, alpha=best_alpha)
+
+    # Save the best model
+    save_best_model(best_model, "best_naive_bayes_model.pkl")
