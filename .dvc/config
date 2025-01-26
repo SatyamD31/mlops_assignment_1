@@ -1,4 +1,4 @@
 [core]
     remote = myremote
 ['remote "myremote"']
-    url = C:\Users\Dell\Downloads\mlops_assignment_1\storage
+    url = C:\Users\Dell\Downloads\mlops_assignment_1\Storage
