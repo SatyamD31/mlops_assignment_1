@@ -43,7 +43,7 @@ def test_neutral_sentiment():
 
 @pytest.fixture
 def model_and_vectorizer():
-    model, vectorizer = load_model('models/model.pkl', 'models/vectorizer.pkl')
+    model, vectorizer = load_model('models/best_naive_bayes_model.pkl', 'models/vectorizer.pkl')
     return model, vectorizer
 
 
