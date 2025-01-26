@@ -1,4 +1,4 @@
 [core]
     remote = myremote
 ['remote "myremote"']
-    url = https://drive.google.com/drive/folders/1SMEgnZwNBros7Zpl75_rMvSqKfU5s4r0?usp=sharing
+    url = gdrive://1SMEgnZwNBros7Zpl75_rMvSqKfU5s4r0
