@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: sentiment-analysis-app
-        image: satyamd31/sentiment-analysis-app:{{IMAGE_TAG}}
+        image: satyamd31/sentiment-analysis-app:v5
         ports:
         - containerPort: 5000

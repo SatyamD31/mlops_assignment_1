@@ -114,5 +114,5 @@ jobs:
       # Step 8: Update Kubernetes Deployment
       - name: Update Kubernetes Deployment
         run: |
-          sed -i "s/{{IMAGE_TAG}}/${{ env.tag }}/g" kubernetes/deployment.yaml
+          # sed -i "s/{{IMAGE_TAG}}/${{ env.tag }}/g" kubernetes/deployment.yaml
           kubectl apply -f kubernetes/deployment.yaml --validate=false
