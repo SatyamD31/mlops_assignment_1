@@ -1,3 +1,4 @@
+# Import required libraries
 import optuna
 import mlflow
 import mlflow.sklearn
@@ -9,6 +10,7 @@ import pandas as pd
 import re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import joblib
 
 # Ensure NLTK resources are downloaded
 import nltk
@@ -18,6 +20,7 @@ nltk.download('stopwords')
 
 # Define the preprocess_text function
 stop_words = set(stopwords.words('english'))
+filepath = "../data/Twitter_Data.csv"
 
 
 def load_and_preprocess_data(file_path):
@@ -67,13 +70,17 @@ def train_model(X_train, y_train, alpha=1.0):
     return nb_classifier
 
 
+def save_model(model, model_path):
+    # Save the model using joblib
+    joblib.dump(model, model_path)
+
+
 def objective(trial):
     # Hyperparameter search space
     alpha = trial.suggest_loguniform('alpha', 1e-5, 1e1)  # log-uniform distribution for alpha
 
     # Load and preprocess the data
     # filepath = 'C:/Users/vidis/Downloads/mlops_assignment_1-feat-satyam/mlops_assignment_1-feat-satyam/data/Twitter_Data.csv'
-    filepath = "../data/Twitter_Data.csv"
     df = load_and_preprocess_data(filepath)
     X, y, tfidf_vectorizer = extract_features(df)
     X_train, X_test, y_train, y_test = split_data(X, y)
@@ -105,6 +112,11 @@ def objective(trial):
     return accuracy  # Optuna optimizes the objective function (maximize accuracy)
 
 
+def save_best_model(best_model, best_model_path="best_naive_bayes_model.pkl"):
+    # Save the best performing model after Optuna optimization
+    joblib.dump(best_model, best_model_path)
+
+
 if __name__ == "__main__":
     # Create an Optuna study for optimization
     study = optuna.create_study(direction="maximize")
@@ -113,3 +125,18 @@ if __name__ == "__main__":
     # Print best hyperparameters and accuracy
     print(f"BEST HYPERPARAMS: {study.best_params}")
     print(f"BEST ACCURACY: {study.best_value}")
+
+    # Get the best trial's model (highest accuracy)
+    best_trial = study.best_trial
+    best_alpha = best_trial.params['alpha']
+
+    # Reload and train the best model using the best alpha
+    # filepath = 'C:/Users/vidis/Downloads/mlops_assignment_1-feat-satyam/mlops_assignment_1-feat-satyam/data/Twitter_Data.csv'
+    df = load_and_preprocess_data(filepath)
+    X, y, tfidf_vectorizer = extract_features(df)
+    X_train, X_test, y_train, y_test = split_data(X, y)
+
+    best_model = train_model(X_train, y_train, alpha=best_alpha)
+
+    # Save the best model
+    save_best_model(best_model, "best_naive_bayes_model.pkl")
