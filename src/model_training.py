@@ -1,4 +1,3 @@
-# Import required libraries
 import optuna
 import mlflow
 import mlflow.sklearn
@@ -20,7 +19,7 @@ nltk.download('stopwords')
 
 # Define the preprocess_text function
 stop_words = set(stopwords.words('english'))
-filepath = "../data/Twitter_Data.csv"
+filepath = "data/Twitter_Data.csv"
 
 
 def load_and_preprocess_data(file_path):
@@ -53,7 +52,7 @@ def preprocess_text(text):
 
 
 def extract_features(df):
-    tfidf_vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2), stop_words='english')
+    tfidf_vectorizer = TfidfVectorizer(max_features=11000, ngram_range=(1, 2), stop_words='english')
     X = tfidf_vectorizer.fit_transform(df['cleaned_text'])
     y = df['category']
     return X, y, tfidf_vectorizer
@@ -77,10 +76,9 @@ def save_model(model, model_path):
 
 def objective(trial):
     # Hyperparameter search space
-    alpha = trial.suggest_loguniform('alpha', 1e-5, 1e1)  # log-uniform distribution for alpha
+    alpha = trial.suggest_loguniform('alpha', 1e-7, 1e-3)  # log-uniform distribution for alpha
 
     # Load and preprocess the data
-    # filepath = 'C:/Users/vidis/Downloads/mlops_assignment_1-feat-satyam/mlops_assignment_1-feat-satyam/data/Twitter_Data.csv'
     df = load_and_preprocess_data(filepath)
     X, y, tfidf_vectorizer = extract_features(df)
     X_train, X_test, y_train, y_test = split_data(X, y)
@@ -131,7 +129,6 @@ if __name__ == "__main__":
     best_alpha = best_trial.params['alpha']
 
     # Reload and train the best model using the best alpha
-    # filepath = 'C:/Users/vidis/Downloads/mlops_assignment_1-feat-satyam/mlops_assignment_1-feat-satyam/data/Twitter_Data.csv'
     df = load_and_preprocess_data(filepath)
     X, y, tfidf_vectorizer = extract_features(df)
     X_train, X_test, y_train, y_test = split_data(X, y)
