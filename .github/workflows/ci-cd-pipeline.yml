@@ -101,7 +101,17 @@ jobs:
       - name: Push Docker Image
         run: docker push satyamd31/sentiment-analysis-app:${{ env.tag }}
 
-      # Step 7: Update Kubernetes Deployment
+      # Step 7: Configure kubeconfig
+      - name: Configure kubeconfig
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        run: |
+          echo "${KUBECONFIG}" > kubeconfig.yaml
+          export KUBECONFIG=$PWD/kubeconfig.yaml
+          kubectl config view
+          kubectl cluster-info
+
+      # Step 8: Update Kubernetes Deployment
       - name: Update Kubernetes Deployment
         run: |
           sed -i "s/{{IMAGE_TAG}}/${{ env.tag }}/g" kubernetes/deployment.yaml
