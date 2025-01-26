@@ -101,16 +101,7 @@ jobs:
       - name: Push Docker Image
         run: docker push satyamd31/sentiment-analysis-app:${{ env.tag }}
 
-      # Step 7: Fetch Latest Tag for Kubernetes Deployment
-      - name: Fetch Latest Docker Tag for Kubernetes
-        id: fetch_latest_k8s
-        run: |
-          latest_tag=$(curl -s https://registry.hub.docker.com/v2/repositories/satyamd31/sentiment-analysis-app/tags \
-          | jq -r '.results[].name' | grep '^v[0-9]\+$' | sort -V | tail -n 1)
-          echo "Latest tag for Kubernetes: $latest_tag"
-          echo "latest_tag=$latest_tag" >> $GITHUB_ENV
-
-      # Step 8: Update Kubernetes Deployment
+      # Step 7: Update Kubernetes Deployment
       - name: Update Kubernetes Deployment
         run: |
           sed -i "s/{{IMAGE_TAG}}/${{ env.tag }}/g" kubernetes/deployment.yaml
