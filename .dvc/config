@@ -1,4 +1,4 @@
 [core]
     remote = myremote
 ['remote "myremote"']
-    url = gdrive://1SMEgnZwNBros7Zpl75_rMvSqKfU5s4r0
+    url = C:\Users\Dell\Downloads\mlops_assignment_1\storage
